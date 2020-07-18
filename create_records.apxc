@@ -1,0 +1,36 @@
+public class create_records {
+    //create records
+    public static void create_rec(){
+        List<Lead> l=new List<Lead>();
+        for(integer i=0;i<10;i++)
+        {
+            if(math.mod(i, 2)==0){//if remainder of i is even number then add city as New York and Country as US.
+            Lead le=new Lead();
+            //le.Id='Programmed_id'+i;
+            le.LastName='Programmed lead'+i;
+            le.Company='Programmed company'+i;
+            le.City='New York';
+            le.Country='US';
+            l.add(le);
+            }
+            else{//if the remainder of i is odd number then add City as Pune and Country as IN.
+            Lead le=new Lead();
+            le.LastName='Programmed lead'+i;
+            le.Company='Programmed company'+i;
+            le.City='Pune';
+            le.Country='IN';
+            l.add(le);
+            }
+            Upsert l;//insert records into database.
+        }
+        
+    }
+    
+    //to delete created records
+    public static void delete_rec(){
+        List<Lead> l=new List<Lead>([Select Company from Lead where Company like 'Programmed%']);
+        delete l;//cleanup created records.
+        System.debug(l);
+        
+    }
+}
