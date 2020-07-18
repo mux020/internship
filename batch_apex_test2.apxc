@@ -1,0 +1,29 @@
+@isTest
+private class batch_apex_test2 {
+    @testSetup 
+    static void setup() {
+        List<Lead> accounts = new List<Lead>();
+        for (Integer i=0;i<40;i++) {
+            if(i<10)
+            accounts.add(new Lead(LastName='Lead '+i,Company='Coco'+i,City='New York', Country='US'));//both correct
+            else if(i<20)
+            accounts.add(new Lead(LastName='Lead not '+i,Company='Coco not'+i,City='New', Country='US'));//City incorrect
+            else if(i<30)
+            accounts.add(new Lead(LastName='Lead not '+i,Company='Coco not'+i,City='New', Country='IN'));//both incorrect
+            else
+            accounts.add(new Lead(LastName='Lead not '+i,Company='Coco not'+i,City='New York', Country='IN'));//Country incorrect
+        }
+        insert accounts;
+    }
+    static testmethod void test() {        
+        Test.startTest();
+        batch_apex ba = new batch_apex();
+        Id batchId = Database.executeBatch(ba);
+        Test.stopTest();
+        // 10 records should contain Rating as Hot and LeadSource as Web.
+        System.assertEquals(10, [select count() from Lead where Rating = 'Hot' and LeadSource='Web']);
+        // 30 records should not contain values for Rating and LeadSource.
+        System.assertEquals(30, [Select count() from Lead where Rating='' and LeadSource='']);
+    }
+    
+}
